@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreativeVR: Diffusion-Prior-Guided Approach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2d3436;
+            --accent-color: #0984e3;
+            --bg-color: #ffffff;
+            --text-color: #2d3436;
+            --light-gray: #f5f6fa;
+            --border-radius: 12px;
+            --gradient-brand: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 0; /* Removed margin */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            text-decoration: none;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0; /* Hidden by default, shown via JS on scroll */
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-brand.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-brand img {
+            height: 28px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0,0,0,0.03);
+            color: #000;
+        }
+        
+        .nav-btn.active {
+            background: var(--text-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Header */
+        header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px; /* Reduced gap */
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px; /* Reduced from 40px */
+            padding: 10px 0 20px; /* Reduced padding */
+            text-align: left;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .main-logo {
+            width: 160px; /* Increased from 130px */
+            height: auto;
+            filter: drop-shadow(0 8px 20px rgba(255, 65, 108, 0.2));
+            border-radius: 20px;
+        }
+
+        h1.title {
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 800;
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin-bottom: 10px; /* Reduced from 15px */
+            color: #1a1a1a;
+            letter-spacing: -0.02em;
+        }
+        
+        .flashy-text {
+            background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            filter: drop-shadow(0 2px 10px rgba(255, 75, 43, 0.2));
+        }
+
+        .authors {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 15px;
+            font-size: 1rem;
+            margin: 5px 0; /* Minimized margin */
+            line-height: 1.2; /* Tighter line height */
+            white-space: nowrap;
+            overflow-x: visible;
+        }
+
+        .author-name {
+            color: #0056b3;
+            font-weight: 600;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .affiliations {
+            font-size: 0.85rem; /* Compact */
+            color: #555;
+            margin-bottom: 2px; /* Minimal margin */
+            display: flex;
+            gap: 12px; /* Tighter gap */
+            flex-wrap: nowrap;
+        }
+        
+        .conf-title {
+            font-weight: 700;
+            color: #2d3436;
+            font-size: 0.85rem; /* Reduced size */
+            margin-top: 12px;
+            background: #f1f2f6;
+            padding: 3px 10px; /* Reduced padding */
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .affiliations sup {
+            margin-right: 3px;
+        }
+
+        .links {
+            display: flex;
+            justify-content: flex-start; /* Align left with text */
+            gap: 12px; /* Reduced from 15px */
+            margin-top: 8px; /* Minimized top margin */
+        }
+
+        /* Polished Buttons */
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #2d3436;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid transparent;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-2px);
+            background: white;
+            color: #2d3436;
+            border-color: #2d3436;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Stylish Section Titles */
+        .section-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            color: #2d3436;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        /* Scroll Offset Fix */
+        section, .figure-container {
+            scroll-margin-top: 100px;
+        }
+        
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 3px;
+            background: var(--gradient-brand);
+            border-radius: 2px;
+            opacity: 0.8;
+        }
+
+        /* Refined Video Card */
+        .video-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px -5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 20px 0; /* Reduced from 40px */
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        /* Badge Alignment */
+        .conf-title {
+            font-weight: 700;
+            color: #2d3436;
+            font-size: 0.9rem; /* Fixed small size */
+            background: #f1f2f6;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 12px;
+            margin-top: -4px; /* Optical alignment */
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .video-controls {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: #fff;
+        }
+
+        .category-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cat-btn {
+            border: none;
+            background: #f1f2f6;
+            padding: 8px 20px; /* Wider padding */
+            border-radius: 30px; /* Pill shape */
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #666;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid transparent; /* Prevent layout shift */
+        }
+
+        .cat-btn:hover {
+            background: #e1e2e6;
+            transform: translateY(-1px);
+            color: #333;
+        }
+
+        .cat-btn.active {
+            background: #1a1a1a;
+            color: white;
+            border-color: #FF4B2B;
+            box-shadow: 0 0 12px rgba(255, 75, 43, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .example-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-arrow {
+            background: white;
+            border: 1px solid #ddd;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .nav-arrow:hover {
+            background: #f8f9fa;
+            border-color: #bbb;
+            transform: scale(1.05);
+        }
+
+        .method-selector {
+            margin-left: auto;
+        }
+        
+        .method-select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* Comparison Slider */
+        .comparison-viewer {
+            position: relative;
+            width: 100%;
+            /* Aspect ratio handled by JS or padding hack */
+            background: #000;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video-before-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%; /* Initial split */
+            height: 100%;
+            overflow: hidden;
+            border-right: 3px solid white;
+            z-index: 10;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+        }
+
+        .video-before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            object-fit: contain;
+            background: #000; /* Ensure black background while loading */
+            /* Width will be set via JS to match container aspect ratio */
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%; /* Initial position */
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 50%;
+            z-index: 20;
+            cursor: ew-resize;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #333;
+            transition: transform 0.1s;
+        }
+        
+        .slider-handle:active {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .video-label {
+            position: absolute;
+            top: 25px;
+            padding: 8px 16px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            z-index: 15;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .label-left { left: 25px; }
+        .label-right { right: 25px; }
+
+        /* Figures */
+        .figure-container {
+            margin: 50px 0;
+            text-align: center;
+            background: #f8f9fa; /* Unified background */
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        .figure-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px; /* Reduced space to caption */
+        }
+
+        /* Captions */
+        .figure-caption {
+            background: transparent; /* Removed separate background */
+            padding: 0 10px; /* Reduced padding */
+            border-radius: 0;
+            text-align: left;
+            margin: 0 auto; /* Removed top margin */
+            border-left: none; /* Removed border accent */
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.6;
+            max-width: 100%;
+        }
+        
+        .figure-caption strong {
+            color: #2d3436;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .caption-list {
+            margin: 5px 0 0 0;
+            padding-left: 0;
+            list-style: none;
+        }
+        
+        .caption-list li {
+            margin-bottom: 6px;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .caption-list li strong {
+            display: inline;
+            color: #555;
+            font-family: inherit;
+            font-size: inherit;
+            margin: 0;
+        }
+        
+        .caption-list li::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* BibTeX */
+        .bibtex-section {
+            background: #f1f2f6;
+            padding: 25px;
+            border-radius: 12px;
+            overflow-x: auto;
+            border: 1px solid #e1e1e1;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2rem;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+    <div class="nav-container">
+        <a href="#top" class="nav-brand" id="nav-brand-logo">
+            <!-- Placeholder for logo if available -->
+            <img src="assets/logo.png" alt="" onerror="this.style.display='none'">
+            CreativeVR
+        </a>
+        <div class="nav-links">
+            <a href="#top" class="nav-btn active">Home</a>
+            <a href="#abstract" class="nav-btn">Abstract</a>
+            <a href="#method" class="nav-btn">Method</a>
+            <a href="#results" class="nav-btn">Results</a>
+            <a href="#ablation" class="nav-btn">Ablation</a>
+            <a href="#comparison" class="nav-btn">Comparisons</a>
+            <a href="#bibtex" class="nav-btn">BibTeX</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container" id="top">
+    
+    <!-- Header -->
+    <header>
+        <!-- Logo Main -->
+        <img src="assets/logo.png" alt="CreativeVR Logo" class="main-logo" onerror="this.style.display='none'">
+        
+        <div class="header-content">
+            <h1 class="title">
+                <span class="flashy-text">CreativeVR</span>: Diffusion-Prior-Guided Approach<br>
+                for Structure and Motion Restoration<br>
+                <span style="font-weight: 400; color: #444; font-size: 0.8em;">in Generative and Real Videos</span>
+                <!-- <div class="conf-title" style="display: inline-block; margin-left: 15px; vertical-align: middle; margin-top: 0;"></div> -->
+            </h1>
+            
+            <div class="authors">
+                <a href="https://tejaspanambur.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Tejas Panambur<sup>1,*,&dagger;</sup></span></a>
+                <a href="https://daveishan.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Ishan Rajendrakumar Dave<sup>2,*</sup></span></a>
+                <a href="https://chongjiange.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Chongjian Ge<sup>2</sup></span></a>
+                <a href="https://www.linkedin.com/in/meyumer/" target="_blank" style="text-decoration: none;"><span class="author-name">Ersin Yumer<sup>2</sup></span></a>
+                <a href="https://sites.google.com/view/xuebai/home" target="_blank" style="text-decoration: none;"><span class="author-name">Xue Bai<sup>2</sup></span></a>
+            </div>
+            
+            <div class="affiliations">
+                <span><sup>1</sup>University of Massachusetts, Amherst</span>
+                <span><sup>2</sup>Adobe</span>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2px; align-items: baseline;">
+                <span style="font-size: 0.8rem; font-family: inherit;">* Equal contribution</span>
+                <span style="font-size: 0.8rem; font-family: inherit;"><sup>&dagger;</sup> Work done as an intern at Adobe, USA.</span>
+            </div>
+
+            <div class="links">
+                <a href="" target="_blank" class="link-btn"><i class="fas fa-file-pdf"></i> Paper</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Top Video Slider -->
+    <div class="video-card" id="main-showcase">
+        <div class="video-controls">
+            <div class="category-selector">
+                <button class="cat-btn active" onclick="switchCategory('AIGC')">AIGC</button>
+                <button class="cat-btn" onclick="switchCategory('Real')">Real</button>
+                <button class="cat-btn" onclick="switchCategory('Real (Challenging)')">Real (Challenging)</button>
+                <button class="cat-btn" onclick="switchCategory('CG2Real')">CG2Real</button>
+                <button class="cat-btn" onclick="switchCategory('SlowMo')">SlowMo</button>
+            </div>
+            <div class="example-nav">
+                <button class="nav-arrow" onclick="prevExample()"><i class="fas fa-chevron-left"></i></button>
+                <span id="example-counter" style="font-size: 0.95rem; font-weight: 600; color: #666;">1 / 3</span>
+                <button class="nav-arrow" onclick="nextExample()"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <div class="comparison-viewer" id="comparison-1">
+            <div class="video-label label-left">Input</div>
+            <div class="video-label label-right">CreativeVR (Ours)</div>
+            
+            <!-- Right side background (Ours) -->
+            <video class="video-after" id="video-right-1" autoplay loop muted playsinline>
+                <source src="assets/AIGC/example1/Ours.mp4" type="video/mp4">
+            </video>
+            
+            <!-- Left side clipped (Input) -->
+            <div class="video-before-container" id="video-clip-1">
+                <video class="video-before" id="video-left-1" autoplay loop muted playsinline>
+                    <source src="assets/AIGC/example1/baseline_input.mp4" type="video/mp4">
+                </video>
+            </div>
+            
+            <div class="slider-handle" id="handle-1">
+                <i class="fas fa-arrows-alt-h"></i>
+            </div>
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+        </div>
+    </div>
+
+    <!-- Abstract -->
+    <section id="abstract" class="abstract-section">
+        <h3 class="section-title">Abstract</h3>
+        <p>
+            Modern text-to-video (T2V) diffusion models can synthesize visually compelling clips, yet they remain brittle at fine-scale structure: even state-of-the-art generators often produce distorted faces and hands, warped backgrounds, and temporally inconsistent motion. Such severe structural artifacts also appear in very low-quality real-world videos. Classical video restoration and super-resolution (VR/VSR) methods, in contrast, are tuned for synthetic degradations such as blur and downsampling and tend to stabilize these artifacts rather than repair them, while diffusion-prior restorers are usually trained on photometric noise and offer little control over the trade-off between perceptual quality and fidelity.
+        </p>
+        <p style="margin-top: 15px;">
+            We introduce <em>CreativeVR</em>, a diffusion-prior-guided video restoration framework for AI-generated (AIGC) and real videos with severe structural and temporal artifacts. Our deep-adapter-based method exposes a single precision knob that controls how strongly the model follows the input, smoothly trading off between precise restoration on standard degradations and stronger structure- and motion-corrective behavior on challenging content. Our key novelty is a temporally coherent degradation module used during training, which applies carefully designed transformations that produce realistic structural failures.
+        </p>
+        <p style="margin-top: 15px;">
+            To evaluate AIGC-artifact restoration, we propose the <i>AIGC54</i> benchmark with FIQA, semantic and perceptual metrics, and multi-aspect scoring. CreativeVR achieves state-of-the-art results on videos with severe artifacts and performs competitively on standard video restoration benchmarks, while running at practical throughput (~13 FPS @ 720p on a single 80 GB A100).
+        </p>
+    </section>
+
+    <!-- Teaser -->
+    <div class="figure-container">
+        <img src="assets/teaser.png" alt="Teaser Figure" class="figure-img" onerror="this.src='https://placehold.co/1000x500?text=Teaser+Figure+(PDF+Conversion+Required)'">
+        <div class="figure-caption">
+            <strong>Figure 1. Precise Restoration vs Structural-corrective Video Restoration.</strong>
+            <ul class="caption-list">
+                <li data-label="(a)">Traditional Video Restoration represents the <em>precision</em> regime: recover detail under synthetic degradations when geometry and motion are intact.</li>
+                <li data-label="(b)">AIGC clips exemplify the <em>prior-guided spatiotemporal correction</em> regime, where the goal is to fix geometric errors and restore temporal coherence while preserving semantics and identity.</li>
+                <li data-label="(c)">Real-world archival footage lies between these extremes and benefits from both precision and prior-guided correction.</li>
+            </ul>
+            Our method modulates this trade-off via a precision knob, behaving precise in case (a) and like a prior-guided corrector in cases (b) and (c).
+        </div>
+    </div>
+
+    <!-- Method -->
+    <section id="method">
+        <h3 class="section-title">Method</h3>
+        <div class="figure-container">
+            <img src="assets/method.png" alt="Method Overview" class="figure-img" onerror="this.src='https://placehold.co/1000x400?text=Method+Figure+(PDF+Conversion+Required)'">
+            <div class="figure-caption">
+                <strong>Figure 2. CreativeVR Overview.</strong>
+                <ul class="caption-list">
+                    <li data-label="(a)">A clean input clip is synthetically degraded via a temporally smooth module and encoded by a frozen VAE. The degraded latents condition a lightweight adapter DiT, which is injected into a frozen T2V backbone via a precision knob <i>&gamma;<sub>&ell;</sub></i>.</li>
+                    <li data-label="(b)">The degradation module composes coherent morphing, directional motion blur, and grid-based warping to mimic realistic artifacts, guiding the adapter to learn robust structure- and motion-corrective behavior without temporal flicker.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results -->
+    <section id="results">
+        <h3 class="section-title">Qualitative Results</h3>
+        <div class="figure-container">
+            <img src="assets/comparisons.png" alt="Visual Comparisons" class="figure-img" onerror="this.src='https://placehold.co/1000x800?text=Comparisons+Figure+(PDF+Conversion+Required)'">
+            <div class="figure-caption">
+                <strong>Figure 3. Qualitative Comparison.</strong>
+                We compare CreativeVR against a wide range of restoration competitors. Prior methods often fail to remove AIGC or real-world artifacts, leaving blurred facial profiles, smeared hands, and distorted signage. CreativeVR consistently restores clean, geometrically plausible faces, fingers, and fine details while faithfully preserving the original pose, identity, and scene layout.
+            </div>
+        </div>
+        
+        <div class="figure-container" id="ablation">
+            <h4 style="margin-bottom: 15px;">Controllable Restoration</h4>
+            <img src="assets/ablation_knob.png" alt="Ablation Knob" class="figure-img">
+            <div class="figure-caption">
+                <strong>Figure 4. Inference Precision Knob.</strong>
+                The single precision control parameter allows a smooth trade-off between fidelity and structural correction. High precision settings strongly preserve input details for standard restoration, while lower precision enables stronger corrective synthesis to repair severe structural defects, providing flexibility across diverse degradation regimes.
+            </div>
+        </div>
+    </section>
+
+    <!-- Method Comparisons Interactive -->
+    <section id="comparison">
+        <h3 class="section-title">Interactive Comparisons</h3>
+        <div class="video-card">
+            <div class="video-controls">
+                <div style="font-weight: 600; color: #555;">Method Comparison</div>
+                <div class="method-selector">
+                    <label for="comp-method" style="font-size: 0.85rem; font-weight: 600; margin-right: 5px;">Compare against:</label>
+                    <select id="comp-method" class="method-select" onchange="updateComparisonMethod(this.value)">
+                        <option value="Input">Input</option>
+                        <option value="FlashVSR">FlashVSR</option>
+                        <option value="Real_ESRGAN">Real-ESRGAN</option>
+                        <option value="RealViformer">RealViformer</option>
+                        <option value="ResShift">ResShift</option>
+                        <option value="SeedVR2" selected>SeedVR2</option>
+                        <option value="STAR">STAR</option>
+                        <option value="Upscale_A_Video">Upscale-A-Video</option>
+                        <option value="VEnhancer">VEnhancer</option>
+                    </select>
+                </div>
+                <div class="example-nav">
+                    <button class="nav-arrow" onclick="prevCompExample()"><i class="fas fa-chevron-left"></i></button>
+                    <span id="comp-counter" style="font-size: 0.85rem; font-weight: 600; color: #666;">1 / 4</span>
+                    <button class="nav-arrow" onclick="nextCompExample()"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="comparison-viewer" id="comparison-2">
+                <div class="video-label label-left" id="comp-label-left">SeedVR2</div>
+                <div class="video-label label-right">CreativeVR (Ours)</div>
+                
+                <!-- Right side background (Ours) -->
+                <video class="video-after" id="comp-video-right" autoplay loop muted playsinline>
+                    <source src="assets/AIGC/example1/Ours.mp4" type="video/mp4">
+                </video>
+                
+                <!-- Left side clipped (Method) -->
+                <div class="video-before-container" id="video-clip-2">
+                    <video class="video-before" id="comp-video-left" autoplay loop muted playsinline>
+                        <!-- Source set by JS to prevent wrong video flash -->
+                    </video>
+                </div>
+                
+                <div class="slider-handle" id="handle-2">
+                    <i class="fas fa-arrows-alt-h"></i>
+                </div>
+            </div>
+            <div style="padding: 10px 15px; background: #f8f9fa; border-top: 1px solid #eee; font-size: 0.85rem; color: #666;">
+                <i class="fas fa-info-circle"></i> Video Source: <span id="comp-category-label" style="font-weight: 600;">AIGC</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- BibTeX -->
+    <section id="bibtex">
+        <h3 class="section-title">BibTeX</h3>
+        <div class="bibtex-section">
+<pre>@article{panambur2026creativevr,
+    title={CreativeVR: Diffusion-Prior-Guided Approach for Structure and Motion Restoration in Generative and Real Videos},
+    author={Panambur, Tejas and Dave, Ishan Rajendrakumar and Ge, Chongjian and Yumer, Ersin and Bai, Xue},
+    journal={Preprint},
+    year={2026}
+}</pre>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 30px 0; margin-top: 40px; color: #888; font-size: 0.9rem;">
+        <p>© 2026 CreativeVR Authors.</p>
+    </footer>
+
+</div>
+
+<script>
+    // Data Configuration
+    const data = {
+        'AIGC': {
+            path: 'assets/AIGC',
+            examples: ['example1', 'example2', 'example3', 'example4', 'example5', 'example6', 'example7', 'example8', 'example9', 'example10', 'temporal_stability'],
+            inputName: 'baseline_input.mp4',
+            oursName: 'Ours.mp4'
+        },
+        'Real': {
+            path: 'assets/Lowres',
+            examples: ['example3', 'example4', 'example6'],
+            inputName: 'baseline_input.mp4',
+            oursName: 'Ours.mp4'
+        },
+        'Real (Challenging)': {
+            path: 'assets/Lowres',
+            examples: ['example1', 'example7', 'example8', 'example9'],
+            inputName: 'baseline_input.mp4',
+            oursName: 'Ours.mp4'
+        },
+        'CG2Real': {
+            path: 'assets/Applications/CG2Real',
+            examples: ['example1', 'example2'], // Root of folder
+            inputName: 'input.mp4',
+            oursName: 'ours.mp4',
+            // single: true
+        },
+        'SlowMo': {
+            path: 'assets/Applications/SlowMo',
+            examples: ['.'], // Root of folder
+            inputName: 'input.mp4',
+            oursName: 'ours.mp4',
+            single: true
+        }
+    };
+
+    // State
+    let currentCat = 'AIGC';
+    let currentExampleIdx = 0;
+    let currentCompMethod = 'SeedVR2';
+    let currentCompExampleIdx = 0;
+    
+    // Combined Comparison examples (AIGC + Lowres)
+    const compExamples = [
+        { path: 'assets/AIGC/example1', category: 'AIGC' },
+        { path: 'assets/AIGC/example2', category: 'AIGC' },
+        { path: 'assets/AIGC/temporal_stability', category: 'AIGC' },
+        { path: 'assets/Lowres/example1', category: 'Real' },
+        { path: 'assets/Lowres/example3', category: 'Real' },
+        { path: 'assets/Lowres/example4', category: 'Real' },
+        { path: 'assets/Lowres/example6', category: 'Real' },
+        { path: 'assets/AIGC/example3', category: 'AIGC' },
+        { path: 'assets/AIGC/example4', category: 'AIGC' },
+        { path: 'assets/AIGC/example5', category: 'AIGC' },
+        { path: 'assets/AIGC/example6', category: 'AIGC' },
+        { path: 'assets/AIGC/example7', category: 'AIGC' },
+        { path: 'assets/AIGC/example8', category: 'AIGC' },
+        { path: 'assets/AIGC/example9', category: 'AIGC' },
+        { path: 'assets/AIGC/example10', category: 'AIGC' },
+        { path: 'assets/Lowres/example1', category: 'Real (Challenging)' },
+        { path: 'assets/Lowres/example7', category: 'Real (Challenging)' },
+    ];
+
+    // Elements
+    const mainVideoLeft = document.getElementById('video-left-1');
+    const mainVideoRight = document.getElementById('video-right-1');
+    const exampleCounter = document.getElementById('example-counter');
+    
+    const compVideoLeft = document.getElementById('comp-video-left');
+    const compVideoRight = document.getElementById('comp-video-right');
+    const compCounter = document.getElementById('comp-counter');
+    const compLabelLeft = document.getElementById('comp-label-left');
+    const compCategoryLabel = document.getElementById('comp-category-label');
+    
+    const navBrandLogo = document.getElementById('nav-brand-logo');
+
+    // Initialize Slider Logic
+    function initSlider(containerId, handleId, clipId, videoLeftId) {
+        const container = document.getElementById(containerId);
+        const handle = document.getElementById(handleId);
+        const clip = document.getElementById(clipId);
+        const videoLeft = document.getElementById(videoLeftId);
+        
+        let isDragging = false;
+
+        function updateSlider(x) {
+            const rect = container.getBoundingClientRect();
+            let pos = (x - rect.left) / rect.width * 100;
+            pos = Math.max(0, Math.min(100, pos));
+            
+            handle.style.left = pos + "%";
+            clip.style.width = pos + "%";
+            videoLeft.style.width = container.offsetWidth + "px";
+        }
+
+        handle.addEventListener('mousedown', () => isDragging = true);
+        window.addEventListener('mouseup', () => isDragging = false);
+        container.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            updateSlider(e.clientX);
+        });
+
+        // Touch support
+        handle.addEventListener('touchstart', () => isDragging = true);
+        window.addEventListener('touchend', () => isDragging = false);
+        container.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            updateSlider(e.touches[0].clientX);
+        });
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            videoLeft.style.width = container.offsetWidth + "px";
+        });
+        
+        // Initial set
+        videoLeft.style.width = container.offsetWidth + "px";
+    }
+
+    // Scroll Spy
+    function initScrollSpy() {
+        const sections = document.querySelectorAll('section, header');
+        const navLinks = document.querySelectorAll('.nav-btn');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const scrollPosition = window.scrollY + 100; // Offset
+            
+            // Check header manually since it might not be a section
+            if (scrollPosition < 600) {
+                current = 'top';
+                navBrandLogo.classList.remove('visible'); // Hide logo when at top
+            } else {
+                navBrandLogo.classList.add('visible'); // Show logo when scrolled
+            }
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollPosition >= sectionTop - 100) {
+                    current = section.getAttribute('id') || 'top';
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // Main Slider Logic
+    function switchCategory(cat) {
+        currentCat = cat;
+        currentExampleIdx = 0;
+        
+        // Update buttons
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.innerText === cat) btn.classList.add('active');
+        });
+
+        updateMainVideo();
+    }
+
+    function nextExample() {
+        const catData = data[currentCat];
+        if (catData.single) return;
+        currentExampleIdx = (currentExampleIdx + 1) % catData.examples.length;
+        updateMainVideo();
+    }
+
+    function prevExample() {
+        const catData = data[currentCat];
+        if (catData.single) return;
+        currentExampleIdx = (currentExampleIdx - 1 + catData.examples.length) % catData.examples.length;
+        updateMainVideo();
+    }
+
+    function updateMainVideo() {
+        const catData = data[currentCat];
+        const example = catData.examples[currentExampleIdx];
+        let basePath = catData.path;
+        
+        if (!catData.single) {
+            basePath += '/' + example;
+        }
+        
+        const inputSrc = basePath + '/' + catData.inputName;
+        const oursSrc = basePath + '/' + catData.oursName;
+
+        // Main Video: Left = Input, Right = Ours
+        mainVideoLeft.src = inputSrc;
+        mainVideoRight.src = oursSrc;
+        
+        mainVideoLeft.load();
+        mainVideoRight.load();
+        
+        mainVideoRight.play().then(() => mainVideoLeft.play());
+        
+        mainVideoRight.ontimeupdate = function() {
+             if ( Math.abs(mainVideoRight.currentTime - mainVideoLeft.currentTime) > 0.2 ) {
+                 mainVideoLeft.currentTime = mainVideoRight.currentTime;
+             }
+        };
+
+        exampleCounter.innerText = catData.single ? "1 / 1" : `${currentExampleIdx + 1} / ${catData.examples.length}`;
+        
+        setTimeout(() => {
+            document.getElementById('video-left-1').style.width = document.getElementById('comparison-1').offsetWidth + "px";
+        }, 100);
+    }
+
+    // Comparison Section Logic
+    function updateComparisonMethod(method) {
+        currentCompMethod = method;
+        compLabelLeft.innerText = method;
+        updateCompVideo();
+    }
+
+    function nextCompExample() {
+        currentCompExampleIdx = (currentCompExampleIdx + 1) % compExamples.length;
+        updateCompVideo();
+    }
+
+    function prevCompExample() {
+        currentCompExampleIdx = (currentCompExampleIdx - 1 + compExamples.length) % compExamples.length;
+        updateCompVideo();
+    }
+
+    function updateCompVideo() {
+        const item = compExamples[currentCompExampleIdx];
+        const basePath = item.path;
+        
+        const oursSrc = `${basePath}/Ours.mp4`;
+        // Handle "Input" mapping to baseline_input.mp4
+        const methodFile = currentCompMethod === 'Input' ? 'baseline_input.mp4' : `${currentCompMethod}.mp4`;
+        const methodSrc = `${basePath}/${methodFile}`;
+
+        // Comparison Video: Left = Method, Right = Ours
+        // compVideoLeft is in the clipped container (left side visually)
+        // compVideoRight is the background (right side visually)
+        
+        compVideoLeft.src = methodSrc; // Left side
+        compVideoRight.src = oursSrc;  // Right side
+        
+        compVideoLeft.load();
+        compVideoRight.load();
+        
+        // Sync based on Right video (Background)
+        compVideoRight.play().then(() => compVideoLeft.play());
+        
+        compVideoRight.ontimeupdate = function() {
+             if ( Math.abs(compVideoRight.currentTime - compVideoLeft.currentTime) > 0.2 ) {
+                 compVideoLeft.currentTime = compVideoRight.currentTime;
+             }
+        };
+
+        compCounter.innerText = `${currentCompExampleIdx + 1} / ${compExamples.length}`;
+        compCategoryLabel.innerText = item.category;
+        
+        setTimeout(() => {
+            document.getElementById('comp-video-left').style.width = document.getElementById('comparison-2').offsetWidth + "px";
+        }, 100);
+    }
+
+
+    // Initialize
+    window.onload = function() {
+        initSlider('comparison-1', 'handle-1', 'video-clip-1', 'video-left-1');
+        initSlider('comparison-2', 'handle-2', 'video-clip-2', 'comp-video-left');
+        initScrollSpy();
+        updateMainVideo();
+        updateCompVideo();
+    };
+
+</script>
+
+</body>
+</html>
