@@ -114,7 +114,7 @@
             margin-bottom: 10px; /* Reduced from 40px */
             padding: 10px 0 20px; /* Reduced padding */
             text-align: left;
-            max-width: 1000px;
+            max-width: 1280px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -159,6 +159,7 @@
             line-height: 1.2; /* Tighter line height */
             white-space: nowrap;
             overflow-x: visible;
+            align-items: center; /* Vertically center all author names */
         }
 
         .author-name {
@@ -166,6 +167,15 @@
             font-weight: 600;
             text-decoration: none;
             position: relative;
+        }
+        
+        .equal-contribution-box {
+            display: inline-flex;
+            gap: 15px;
+            background: linear-gradient(135deg, rgba(255, 65, 108, 0.08) 0%, rgba(255, 75, 43, 0.08) 100%);
+            padding: 6px 16px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255, 75, 43, 0.2);
         }
 
         .affiliations {
@@ -190,6 +200,14 @@
 
         .affiliations sup {
             margin-right: 3px;
+        }
+        
+        .affiliation-icon {
+            display: inline-block;
+            height: 0.9em;
+            width: auto;
+            vertical-align: middle;
+            margin: 0 2px;
         }
 
         .links {
@@ -553,6 +571,46 @@
             font-size: 2rem;
             display: none;
         }
+        
+        /* Play/Pause Button */
+        .video-play-button {
+            position: absolute;
+            top: calc(50% + 65px); /* Position below the slider handle */
+            left: 50%; /* Initial position, will be updated by JS */
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 25;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+        
+        .video-play-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        
+        .video-play-button i {
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .video-play-button.playing i::before {
+            content: "\f04c"; /* pause icon */
+        }
+        
+        .video-play-button.paused i::before {
+            content: "\f04b"; /* play icon */
+        }
 
     </style>
 </head>
@@ -587,27 +645,28 @@
         
         <div class="header-content">
             <h1 class="title">
-                <span class="flashy-text">CreativeVR</span>: Diffusion-Prior-Guided Approach<br>
-                for Structure and Motion Restoration<br>
-                <span style="font-weight: 400; color: #444; font-size: 0.8em;">in Generative and Real Videos</span>
+                <span class="flashy-text">CreativeVR</span>: Diffusion-Prior-Guided Approach 
+                for Structure and Motion Restoration in Generative and Real Videos
                 <!-- <div class="conf-title" style="display: inline-block; margin-left: 15px; vertical-align: middle; margin-top: 0;"></div> -->
             </h1>
             
             <div class="authors">
-                <a href="https://tejaspanambur.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Tejas Panambur<sup>1,*,&dagger;</sup></span></a>
-                <a href="https://daveishan.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Ishan Rajendrakumar Dave<sup>2,*</sup></span></a>
-                <a href="https://chongjiange.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Chongjian Ge<sup>2</sup></span></a>
-                <a href="https://www.linkedin.com/in/meyumer/" target="_blank" style="text-decoration: none;"><span class="author-name">Ersin Yumer<sup>2</sup></span></a>
-                <a href="https://sites.google.com/view/xuebai/home" target="_blank" style="text-decoration: none;"><span class="author-name">Xue Bai<sup>2</sup></span></a>
+                <div class="equal-contribution-box">
+                    <a href="https://tejaspanambur.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Tejas Panambur<sup>🎓,★,&dagger;</sup></span></a>
+                    <a href="https://daveishan.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Ishan Rajendrakumar Dave<sup><img src="assets/adobe_logo.png" class="affiliation-icon" alt="Adobe">,★</sup></span></a>
+                </div>
+                <a href="https://chongjiange.github.io/" target="_blank" style="text-decoration: none;"><span class="author-name">Chongjian Ge<sup><img src="assets/adobe_logo.png" class="affiliation-icon" alt="Adobe"></sup></span></a>
+                <a href="https://www.linkedin.com/in/meyumer/" target="_blank" style="text-decoration: none;"><span class="author-name">Ersin Yumer<sup><img src="assets/adobe_logo.png" class="affiliation-icon" alt="Adobe"></sup></span></a>
+                <a href="https://sites.google.com/view/xuebai/home" target="_blank" style="text-decoration: none;"><span class="author-name">Xue Bai<sup><img src="assets/adobe_logo.png" class="affiliation-icon" alt="Adobe"></sup></span></a>
             </div>
             
             <div class="affiliations">
-                <span><sup>1</sup>University of Massachusetts, Amherst</span>
-                <span><sup>2</sup>Adobe</span>
+                <span><sup>🎓</sup>University of Massachusetts, Amherst</span>
+                <span><sup><img src="assets/adobe_logo.png" class="affiliation-icon" alt="Adobe"></sup>Adobe</span>
             </div>
             
             <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2px; align-items: baseline;">
-                <span style="font-size: 0.8rem; font-family: inherit;">* Equal contribution</span>
+                <span style="font-size: 0.8rem; font-family: inherit;">★ Equal contribution</span>
                 <span style="font-size: 0.8rem; font-family: inherit;"><sup>&dagger;</sup> Work done as an intern at Adobe, USA.</span>
             </div>
 
@@ -653,6 +712,9 @@
             <div class="slider-handle" id="handle-1">
                 <i class="fas fa-arrows-alt-h"></i>
             </div>
+            <button class="video-play-button playing" id="play-btn-1" onclick="togglePlayPause(1)">
+                <i class="fas"></i>
+            </button>
             <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
         </div>
     </div>
@@ -767,6 +829,9 @@
                 <div class="slider-handle" id="handle-2">
                     <i class="fas fa-arrows-alt-h"></i>
                 </div>
+                <button class="video-play-button playing" id="play-btn-2" onclick="togglePlayPause(2)">
+                    <i class="fas"></i>
+                </button>
             </div>
             <div style="padding: 10px 15px; background: #f8f9fa; border-top: 1px solid #eee; font-size: 0.85rem; color: #666;">
                 <i class="fas fa-info-circle"></i> Video Source: <span id="comp-category-label" style="font-weight: 600;">AIGC</span>
@@ -871,11 +936,12 @@
     const navBrandLogo = document.getElementById('nav-brand-logo');
 
     // Initialize Slider Logic
-    function initSlider(containerId, handleId, clipId, videoLeftId) {
+    function initSlider(containerId, handleId, clipId, videoLeftId, playButtonId) {
         const container = document.getElementById(containerId);
         const handle = document.getElementById(handleId);
         const clip = document.getElementById(clipId);
         const videoLeft = document.getElementById(videoLeftId);
+        const playButton = document.getElementById(playButtonId);
         
         let isDragging = false;
 
@@ -887,6 +953,11 @@
             handle.style.left = pos + "%";
             clip.style.width = pos + "%";
             videoLeft.style.width = container.offsetWidth + "px";
+            
+            // Update play button position to follow the handle
+            if (playButton) {
+                playButton.style.left = pos + "%";
+            }
         }
 
         handle.addEventListener('mousedown', () => isDragging = true);
@@ -911,6 +982,10 @@
         
         // Initial set
         videoLeft.style.width = container.offsetWidth + "px";
+        // Set initial play button position
+        if (playButton) {
+            playButton.style.left = "50%";
+        }
     }
 
     // Scroll Spy
@@ -1063,10 +1138,39 @@
     }
 
 
+    // Play/Pause Toggle Function
+    function togglePlayPause(viewerId) {
+        let videoLeft, videoRight, playButton;
+        
+        if (viewerId === 1) {
+            videoLeft = document.getElementById('video-left-1');
+            videoRight = document.getElementById('video-right-1');
+            playButton = document.getElementById('play-btn-1');
+        } else if (viewerId === 2) {
+            videoLeft = document.getElementById('comp-video-left');
+            videoRight = document.getElementById('comp-video-right');
+            playButton = document.getElementById('play-btn-2');
+        }
+        
+        if (videoRight.paused) {
+            // Play both videos
+            videoRight.play();
+            videoLeft.play();
+            playButton.classList.remove('paused');
+            playButton.classList.add('playing');
+        } else {
+            // Pause both videos
+            videoRight.pause();
+            videoLeft.pause();
+            playButton.classList.remove('playing');
+            playButton.classList.add('paused');
+        }
+    }
+
     // Initialize
     window.onload = function() {
-        initSlider('comparison-1', 'handle-1', 'video-clip-1', 'video-left-1');
-        initSlider('comparison-2', 'handle-2', 'video-clip-2', 'comp-video-left');
+        initSlider('comparison-1', 'handle-1', 'video-clip-1', 'video-left-1', 'play-btn-1');
+        initSlider('comparison-2', 'handle-2', 'video-clip-2', 'comp-video-left', 'play-btn-2');
         initScrollSpy();
         updateMainVideo();
         updateCompVideo();

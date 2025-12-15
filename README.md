@@ -1,6 +1,6 @@
 # CreativeVR: Diffusion-Prior-Guided Approach for Structure and Motion Restoration in Generative and Real Videos
 
-**[Project Page]()** | **[Paper](#)** 
+**[Project Page](https://daveishan.github.io/creativevr-webpage/)** | **[Paper](#)** 
 
 > **Abstract:** Modern text-to-video (T2V) diffusion models can synthesize visually compelling clips, yet they remain brittle at fine-scale structure. CreativeVR is a diffusion-prior-guided video restoration framework for AI-generated (AIGC) and real videos with severe structural and temporal artifacts. Our deep-adapter-based method exposes a single precision knob that controls how strongly the model follows the input, smoothly trading off between precise restoration on standard degradations and stronger structure- and motion-corrective behavior on challenging content.
 
