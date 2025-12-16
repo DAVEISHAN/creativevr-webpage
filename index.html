@@ -369,9 +369,6 @@
             transform: scale(1.05);
         }
 
-        .method-selector {
-            margin-left: auto;
-        }
         
         .method-select {
             padding: 8px 12px;
@@ -772,37 +769,106 @@
             color: #333;
         }
         
-        .knob-buttons {
+        .knob-slider-container {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px 0;
         }
         
-        .knob-btn {
-            border: none;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
+        .knob-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-spectrum-label {
             font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .slider-spectrum-label.left {
+            color: #9C27B0;
+            text-align: right;
+        }
+        
+        .slider-spectrum-label.right {
+            color: #2196F3;
+            text-align: left;
+        }
+        
+        .spectrum-icon {
+            font-size: 1.3rem;
+        }
+        
+        .knob-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #9C27B0 0%, #E91E63 50%, #2196F3 100%);
+            outline: none;
+            -webkit-appearance: none;
+            position: relative;
+        }
+        
+        .knob-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 3px solid #E91E63;
+            transition: all 0.2s ease;
+        }
+        
+        .knob-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+        }
+        
+        .knob-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 3px solid #E91E63;
+            transition: all 0.2s ease;
+        }
+        
+        .knob-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+        }
+        
+        .knob-value-display {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #E91E63;
+            margin-top: 5px;
+        }
+        
+        .knob-ticks {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            margin-top: 5px;
+        }
+        
+        .knob-tick {
+            font-size: 0.85rem;
             color: #666;
-            transition: all 0.3s ease;
-            border: 2px solid #ddd;
-            min-width: 70px;
-        }
-        
-        .knob-btn:hover {
-            background: #f0f0f0;
-            border-color: #bbb;
-        }
-        
-        .knob-btn.active {
-            background: #FF4B2B;
-            color: white;
-            border-color: #FF4B2B;
-            box-shadow: 0 0 12px rgba(255, 75, 43, 0.3);
+            font-weight: 500;
         }
         
         .ablation-navigation {
@@ -995,11 +1061,11 @@
             
             <div class="ablation-viewer">
                 <div class="ablation-image-container">
-                    <img id="ablation-input-image" src="assets/ablation_knob_cells/sample_01_input.png" alt="Input" class="ablation-image">
+                    <img id="ablation-input-image" src="assets/ablation_images/sample1_input.png" alt="Input" class="ablation-image">
                     <div class="ablation-label">Input</div>
                 </div>
                 <div class="ablation-image-container">
-                    <img id="ablation-output-image" src="assets/ablation_knob_cells/sample_01_knob1.png" alt="Output" class="ablation-image">
+                    <img id="ablation-output-image" src="assets/ablation_images/sample1_knob1.png" alt="Output" class="ablation-image">
                     <div class="ablation-label" id="ablation-output-label">Precision: 1.0</div>
                 </div>
             </div>
@@ -1007,12 +1073,28 @@
             <div class="knob-controls">
                 <div class="knob-selector">
                     <div class="knob-label">Precision Knob:</div>
-                    <div class="knob-buttons">
-                        <button class="knob-btn" onclick="setAblationKnob(0.1)">0.1</button>
-                        <button class="knob-btn" onclick="setAblationKnob(0.2)">0.2</button>
-                        <button class="knob-btn" onclick="setAblationKnob(0.4)">0.4</button>
-                        <button class="knob-btn" onclick="setAblationKnob(0.6)">0.6</button>
-                        <button class="knob-btn active" onclick="setAblationKnob(1.0)">1.0</button>
+                    <div class="knob-slider-container">
+                        <div class="knob-slider-wrapper">
+                            <div class="slider-spectrum-label left">
+                                <span class="spectrum-icon">✨</span>
+                                <span>Creative<br>Output</span>
+                            </div>
+                            <div style="flex: 1;">
+                                <input type="range" min="0" max="4" value="4" step="1" class="knob-slider" id="precision-slider" oninput="setAblationKnobFromSlider(this.value)">
+                                <div class="knob-ticks">
+                                    <span class="knob-tick">0.1</span>
+                                    <span class="knob-tick">0.2</span>
+                                    <span class="knob-tick">0.4</span>
+                                    <span class="knob-tick">0.6</span>
+                                    <span class="knob-tick">1.0</span>
+                                </div>
+                            </div>
+                            <div class="slider-spectrum-label right">
+                                <span class="spectrum-icon">🎯</span>
+                                <span>Faithful<br>Output</span>
+                            </div>
+                        </div>
+                        <div class="knob-value-display" id="knob-value-display">Precision: 1.0</div>
                     </div>
                 </div>
                 
@@ -1039,7 +1121,6 @@
         <h3 class="section-title">Interactive Comparisons</h3>
         <div class="video-card">
             <div class="video-controls">
-                <div style="font-weight: 600; color: #555;">Method Comparison</div>
                 <div class="method-selector">
                     <label for="comp-method" style="font-size: 0.85rem; font-weight: 600; margin-right: 5px;">Compare against:</label>
                     <select id="comp-method" class="method-select" onchange="updateComparisonMethod(this.value)">
@@ -1094,11 +1175,14 @@
     <section id="bibtex">
         <h3 class="section-title">BibTeX</h3>
         <div class="bibtex-section">
-<pre>@article{panambur2026creativevr,
+<pre>@misc{panambur2024creativevr,
     title={CreativeVR: Diffusion-Prior-Guided Approach for Structure and Motion Restoration in Generative and Real Videos},
-    author={Panambur, Tejas and Dave, Ishan Rajendrakumar and Ge, Chongjian and Yumer, Ersin and Bai, Xue},
-    journal={Preprint},
-    year={2026}
+    author={Tejas Panambur and Ishan Rajendrakumar Dave and Chongjian Ge and Ersin Yumer and Xue Bai},
+    year={2024},
+    eprint={2512.12060},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV},
+    url={https://arxiv.org/abs/2512.12060}
 }</pre>
         </div>
     </section>
@@ -1320,7 +1404,13 @@
         mainVideoLeft.load();
         mainVideoRight.load();
         
-        mainVideoRight.play().then(() => mainVideoLeft.play());
+        mainVideoRight.play().then(() => {
+            mainVideoLeft.play();
+            // Update play button state to playing
+            const playButton = document.getElementById('play-btn-1');
+            playButton.classList.remove('paused');
+            playButton.classList.add('playing');
+        });
         
         mainVideoRight.ontimeupdate = function() {
              if ( Math.abs(mainVideoRight.currentTime - mainVideoLeft.currentTime) > 0.2 ) {
@@ -1372,7 +1462,13 @@
         compVideoRight.load();
         
         // Sync based on Right video (Background)
-        compVideoRight.play().then(() => compVideoLeft.play());
+        compVideoRight.play().then(() => {
+            compVideoLeft.play();
+            // Update play button state to playing
+            const playButton = document.getElementById('play-btn-2');
+            playButton.classList.remove('paused');
+            playButton.classList.add('playing');
+        });
         
         compVideoRight.ontimeupdate = function() {
              if ( Math.abs(compVideoRight.currentTime - compVideoLeft.currentTime) > 0.2 ) {
@@ -1461,7 +1557,7 @@
     // Ablation Knob Viewer
     let currentAblationSample = 0;
     let currentAblationKnob = 1.0;
-    const ablationSamples = ['sample_01', 'sample_02', 'sample_03', 'sample_04', 'sample_05'];
+    const ablationSamples = ['sample1', 'sample2', 'sample3', 'sample4', 'sample5'];
     const knobValues = [0.1, 0.2, 0.4, 0.6, 1.0];
     
     function getKnobFilename(knobValue) {
@@ -1472,17 +1568,17 @@
         return 'knob' + str.padStart(2, '0');
     }
     
-    function setAblationKnob(knobValue) {
+    function setAblationKnobFromSlider(sliderValue) {
+        const knobValue = knobValues[parseInt(sliderValue)];
         currentAblationKnob = knobValue;
         updateAblationViewer();
-        
-        // Update button states
-        document.querySelectorAll('.knob-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (parseFloat(btn.textContent) === knobValue) {
-                btn.classList.add('active');
-            }
-        });
+    }
+    
+    function setAblationKnob(knobValue) {
+        currentAblationKnob = knobValue;
+        const sliderIndex = knobValues.indexOf(knobValue);
+        document.getElementById('precision-slider').value = sliderIndex;
+        updateAblationViewer();
     }
     
     function changeAblationSample(direction) {
@@ -1502,11 +1598,13 @@
         const inputImage = document.getElementById('ablation-input-image');
         const outputImage = document.getElementById('ablation-output-image');
         const outputLabel = document.getElementById('ablation-output-label');
+        const valueDisplay = document.getElementById('knob-value-display');
         const counter = document.getElementById('ablation-counter');
         
-        inputImage.src = `assets/ablation_knob_cells/${sampleName}_input.png`;
-        outputImage.src = `assets/ablation_knob_cells/${sampleName}_${knobFilename}.png`;
+        inputImage.src = `assets/ablation_images/${sampleName}_input.png`;
+        outputImage.src = `assets/ablation_images/${sampleName}_${knobFilename}.png`;
         outputLabel.textContent = `Precision: ${currentAblationKnob.toFixed(1)}`;
+        valueDisplay.textContent = `Precision: ${currentAblationKnob.toFixed(1)}`;
         counter.textContent = `${currentAblationSample + 1} / ${ablationSamples.length}`;
     }
 
