@@ -611,6 +611,206 @@
         .video-play-button.paused i::before {
             content: "\f04b"; /* play icon */
         }
+        
+        /* Image Slider */
+        .image-slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .slider-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .slider-images-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            align-items: center;
+        }
+        
+        .slider-image-top-wrapper {
+            width: 50%;
+            overflow: hidden;
+            border-bottom: 1px solid #e0e0e0;
+            position: relative;
+        }
+        
+        .slider-image {
+            height: auto;
+            display: block;
+            border: none;
+        }
+        
+        .slider-image.top {
+            width: 50%;
+            display: block;
+            /* margin-top: -55px; */
+        }
+        
+        .slider-image.bottom {
+            width: 100%;
+        }
+        
+        .slider-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .slider-arrow {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ddd;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            font-size: 1.1rem;
+            backdrop-filter: blur(8px);
+        }
+        
+        .slider-arrow:hover {
+            background: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-dot.active {
+            background: #FF4B2B;
+            transform: scale(1.3);
+        }
+        
+        .slider-counter {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        /* Ablation Knob Viewer */
+        .ablation-viewer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .ablation-image-container {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .ablation-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .ablation-label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 6px 14px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .knob-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .knob-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .knob-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #333;
+        }
+        
+        .knob-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .knob-btn {
+            border: none;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #666;
+            transition: all 0.3s ease;
+            border: 2px solid #ddd;
+            min-width: 70px;
+        }
+        
+        .knob-btn:hover {
+            background: #f0f0f0;
+            border-color: #bbb;
+        }
+        
+        .knob-btn.active {
+            background: #FF4B2B;
+            color: white;
+            border-color: #FF4B2B;
+            box-shadow: 0 0 12px rgba(255, 75, 43, 0.3);
+        }
+        
+        .ablation-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
 
     </style>
 </head>
@@ -681,8 +881,8 @@
         <div class="video-controls">
             <div class="category-selector">
                 <button class="cat-btn active" onclick="switchCategory('AIGC')">AIGC</button>
-                <button class="cat-btn" onclick="switchCategory('Real')">Real</button>
-                <button class="cat-btn" onclick="switchCategory('Real (Challenging)')">Real (Challenging)</button>
+                <button class="cat-btn" onclick="switchCategory('Real Footage')">Real Footage</button>
+                <button class="cat-btn" onclick="switchCategory('Real (Challenging)')">Real Footage (Extreme Artifacts)</button>
                 <button class="cat-btn" onclick="switchCategory('CG2Real')">CG2Real</button>
                 <button class="cat-btn" onclick="switchCategory('SlowMo')">SlowMo</button>
             </div>
@@ -766,7 +966,24 @@
     <section id="results">
         <h3 class="section-title">Qualitative Results</h3>
         <div class="figure-container">
-            <img src="assets/comparisons.png" alt="Visual Comparisons" class="figure-img" onerror="this.src='https://placehold.co/1000x800?text=Comparisons+Figure+(PDF+Conversion+Required)'">
+            <div class="image-slider">
+                <div class="slider-container">
+                    <div class="slider-images-stack">
+                        <img id="comparison-slider-image-top" src="assets/comparisons_samples_firstcol_noheader/sample_01.png" alt="Input Frame" class="slider-image top">
+                        <img id="comparison-slider-image-bottom" src="assets/comparisons_samples_rest/sample_01.png" alt="Method Comparisons" class="slider-image bottom">
+                    </div>
+                </div>
+                <div class="slider-navigation">
+                    <div class="slider-arrow" onclick="changeComparisonSlide(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="slider-dots" id="comparison-slider-dots"></div>
+                    <div class="slider-arrow" onclick="changeComparisonSlide(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                <div class="slider-counter" id="comparison-slider-counter">1 / 5</div>
+            </div>
             <div class="figure-caption">
                 <strong>Figure 3. Qualitative Comparison.</strong>
                 We compare CreativeVR against a wide range of restoration competitors. Prior methods often fail to remove AIGC or real-world artifacts, leaving blurred facial profiles, smeared hands, and distorted signage. CreativeVR consistently restores clean, geometrically plausible faces, fingers, and fine details while faithfully preserving the original pose, identity, and scene layout.
@@ -775,7 +992,41 @@
         
         <div class="figure-container" id="ablation">
             <h4 style="margin-bottom: 15px;">Controllable Restoration</h4>
-            <img src="assets/ablation_knob.png" alt="Ablation Knob" class="figure-img">
+            
+            <div class="ablation-viewer">
+                <div class="ablation-image-container">
+                    <img id="ablation-input-image" src="assets/ablation_knob_cells/sample_01_input.png" alt="Input" class="ablation-image">
+                    <div class="ablation-label">Input</div>
+                </div>
+                <div class="ablation-image-container">
+                    <img id="ablation-output-image" src="assets/ablation_knob_cells/sample_01_knob1.png" alt="Output" class="ablation-image">
+                    <div class="ablation-label" id="ablation-output-label">Precision: 1.0</div>
+                </div>
+            </div>
+            
+            <div class="knob-controls">
+                <div class="knob-selector">
+                    <div class="knob-label">Precision Knob:</div>
+                    <div class="knob-buttons">
+                        <button class="knob-btn" onclick="setAblationKnob(0.1)">0.1</button>
+                        <button class="knob-btn" onclick="setAblationKnob(0.2)">0.2</button>
+                        <button class="knob-btn" onclick="setAblationKnob(0.4)">0.4</button>
+                        <button class="knob-btn" onclick="setAblationKnob(0.6)">0.6</button>
+                        <button class="knob-btn active" onclick="setAblationKnob(1.0)">1.0</button>
+                    </div>
+                </div>
+                
+                <div class="ablation-navigation">
+                    <div class="slider-arrow" onclick="changeAblationSample(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <span id="ablation-counter" style="font-size: 0.95rem; font-weight: 600; color: #666;">1 / 5</span>
+                    <div class="slider-arrow" onclick="changeAblationSample(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+            
             <div class="figure-caption">
                 <strong>Figure 4. Inference Precision Knob.</strong>
                 The single precision control parameter allows a smooth trade-off between fidelity and structural correction. High precision settings strongly preserve input details for standard restoration, while lower precision enables stronger corrective synthesis to repair severe structural defects, providing flexibility across diverse degradation regimes.
@@ -867,26 +1118,26 @@
             inputName: 'baseline_input.mp4',
             oursName: 'Ours.mp4'
         },
-        'Real': {
+        'Real Footage': {
             path: 'assets/Lowres',
             examples: ['example3', 'example4', 'example6'],
             inputName: 'baseline_input.mp4',
             oursName: 'Ours.mp4'
         },
-        'Real (Challenging)': {
+        'Real Footage (Extreme Artifacts)': {
             path: 'assets/Lowres',
             examples: ['example1', 'example7', 'example8', 'example9'],
             inputName: 'baseline_input.mp4',
             oursName: 'Ours.mp4'
         },
-        'CG2Real': {
+        'CG2Real usecase': {
             path: 'assets/Applications/CG2Real',
             examples: ['example1', 'example2'], // Root of folder
             inputName: 'input.mp4',
             oursName: 'ours.mp4',
             // single: true
         },
-        'SlowMo': {
+        'SlowMo usecase': {
             path: 'assets/Applications/SlowMo',
             examples: ['.'], // Root of folder
             inputName: 'input.mp4',
@@ -898,14 +1149,14 @@
     // State
     let currentCat = 'AIGC';
     let currentExampleIdx = 0;
-    let currentCompMethod = 'SeedVR2';
+    let currentCompMethod = 'Real_ESRGAN';
     let currentCompExampleIdx = 0;
     
     // Combined Comparison examples (AIGC + Lowres)
     const compExamples = [
+        { path: 'assets/AIGC/temporal_stability', category: 'AIGC' },
         { path: 'assets/AIGC/example1', category: 'AIGC' },
         { path: 'assets/AIGC/example2', category: 'AIGC' },
-        { path: 'assets/AIGC/temporal_stability', category: 'AIGC' },
         { path: 'assets/Lowres/example1', category: 'Real' },
         { path: 'assets/Lowres/example3', category: 'Real' },
         { path: 'assets/Lowres/example4', category: 'Real' },
@@ -1138,6 +1389,127 @@
     }
 
 
+    // Comparison Image Slider
+    const comparisonSlides = [
+        { 
+            top: 'assets/comparisons_samples_firstcol_noheader/sample_01.png',
+            bottom: 'assets/comparisons_samples_rest/sample_01.png'
+        },
+        { 
+            top: 'assets/comparisons_samples_firstcol_noheader/sample_02.png',
+            bottom: 'assets/comparisons_samples_rest/sample_02.png'
+        },
+        { 
+            top: 'assets/comparisons_samples_firstcol_noheader/sample_03.png',
+            bottom: 'assets/comparisons_samples_rest/sample_03.png'
+        },
+        { 
+            top: 'assets/comparisons_samples_firstcol_noheader/sample_04.png',
+            bottom: 'assets/comparisons_samples_rest/sample_04.png'
+        },
+        { 
+            top: 'assets/comparisons_samples_firstcol_noheader/sample_05.png',
+            bottom: 'assets/comparisons_samples_rest/sample_05.png'
+        }
+    ];
+    let currentComparisonSlide = 0;
+    
+    function initComparisonSlider() {
+        const dotsContainer = document.getElementById('comparison-slider-dots');
+        comparisonSlides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'slider-dot' + (index === 0 ? ' active' : '');
+            dot.onclick = () => setComparisonSlide(index);
+            dotsContainer.appendChild(dot);
+        });
+    }
+    
+    function changeComparisonSlide(direction) {
+        currentComparisonSlide += direction;
+        if (currentComparisonSlide < 0) {
+            currentComparisonSlide = comparisonSlides.length - 1;
+        } else if (currentComparisonSlide >= comparisonSlides.length) {
+            currentComparisonSlide = 0;
+        }
+        updateComparisonSlider();
+    }
+    
+    function setComparisonSlide(index) {
+        currentComparisonSlide = index;
+        updateComparisonSlider();
+    }
+    
+    function updateComparisonSlider() {
+        const imageTop = document.getElementById('comparison-slider-image-top');
+        const imageBottom = document.getElementById('comparison-slider-image-bottom');
+        const counter = document.getElementById('comparison-slider-counter');
+        const dots = document.querySelectorAll('#comparison-slider-dots .slider-dot');
+        
+        imageTop.src = comparisonSlides[currentComparisonSlide].top;
+        imageBottom.src = comparisonSlides[currentComparisonSlide].bottom;
+        counter.textContent = `${currentComparisonSlide + 1} / ${comparisonSlides.length}`;
+        
+        dots.forEach((dot, index) => {
+            if (index === currentComparisonSlide) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    // Ablation Knob Viewer
+    let currentAblationSample = 0;
+    let currentAblationKnob = 1.0;
+    const ablationSamples = ['sample_01', 'sample_02', 'sample_03', 'sample_04', 'sample_05'];
+    const knobValues = [0.1, 0.2, 0.4, 0.6, 1.0];
+    
+    function getKnobFilename(knobValue) {
+        // Convert knob value to filename format
+        // 0.1 -> knob01, 0.2 -> knob02, 0.4 -> knob04, 0.6 -> knob06, 1.0 -> knob1
+        if (knobValue === 1.0) return 'knob1';
+        const str = knobValue.toString().replace('.', '');
+        return 'knob' + str.padStart(2, '0');
+    }
+    
+    function setAblationKnob(knobValue) {
+        currentAblationKnob = knobValue;
+        updateAblationViewer();
+        
+        // Update button states
+        document.querySelectorAll('.knob-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (parseFloat(btn.textContent) === knobValue) {
+                btn.classList.add('active');
+            }
+        });
+    }
+    
+    function changeAblationSample(direction) {
+        currentAblationSample += direction;
+        if (currentAblationSample < 0) {
+            currentAblationSample = ablationSamples.length - 1;
+        } else if (currentAblationSample >= ablationSamples.length) {
+            currentAblationSample = 0;
+        }
+        updateAblationViewer();
+    }
+    
+    function updateAblationViewer() {
+        const sampleName = ablationSamples[currentAblationSample];
+        const knobFilename = getKnobFilename(currentAblationKnob);
+        
+        const inputImage = document.getElementById('ablation-input-image');
+        const outputImage = document.getElementById('ablation-output-image');
+        const outputLabel = document.getElementById('ablation-output-label');
+        const counter = document.getElementById('ablation-counter');
+        
+        inputImage.src = `assets/ablation_knob_cells/${sampleName}_input.png`;
+        outputImage.src = `assets/ablation_knob_cells/${sampleName}_${knobFilename}.png`;
+        outputLabel.textContent = `Precision: ${currentAblationKnob.toFixed(1)}`;
+        counter.textContent = `${currentAblationSample + 1} / ${ablationSamples.length}`;
+    }
+
     // Play/Pause Toggle Function
     function togglePlayPause(viewerId) {
         let videoLeft, videoRight, playButton;
@@ -1174,6 +1546,7 @@
         initScrollSpy();
         updateMainVideo();
         updateCompVideo();
+        initComparisonSlider();
     };
 
 </script>
