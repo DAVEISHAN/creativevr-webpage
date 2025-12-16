@@ -871,7 +871,7 @@
             </div>
 
             <div class="links">
-                <a href="" target="_blank" class="link-btn"><i class="fas fa-file-pdf"></i> Paper</a>
+                <a href="https://arxiv.org/pdf/2512.12060" target="_blank" class="link-btn"><i class="fas fa-file-pdf"></i> Paper</a>
             </div>
         </div>
     </header>
@@ -882,7 +882,7 @@
             <div class="category-selector">
                 <button class="cat-btn active" onclick="switchCategory('AIGC')">AIGC</button>
                 <button class="cat-btn" onclick="switchCategory('Real Footage')">Real Footage</button>
-                <button class="cat-btn" onclick="switchCategory('Real (Challenging)')">Real Footage (Extreme Artifacts)</button>
+                <button class="cat-btn" onclick="switchCategory('Real Footage (Extreme Artifacts)')">Real Footage (Extreme Artifacts)</button>
                 <button class="cat-btn" onclick="switchCategory('CG2Real')">CG2Real</button>
                 <button class="cat-btn" onclick="switchCategory('SlowMo')">SlowMo</button>
             </div>
@@ -1130,14 +1130,14 @@
             inputName: 'baseline_input.mp4',
             oursName: 'Ours.mp4'
         },
-        'CG2Real usecase': {
+        'CG2Real': {
             path: 'assets/Applications/CG2Real',
             examples: ['example1', 'example2'], // Root of folder
             inputName: 'input.mp4',
             oursName: 'ours.mp4',
             // single: true
         },
-        'SlowMo usecase': {
+        'SlowMo': {
             path: 'assets/Applications/SlowMo',
             examples: ['.'], // Root of folder
             inputName: 'input.mp4',
@@ -1169,8 +1169,8 @@
         { path: 'assets/AIGC/example8', category: 'AIGC' },
         { path: 'assets/AIGC/example9', category: 'AIGC' },
         { path: 'assets/AIGC/example10', category: 'AIGC' },
-        { path: 'assets/Lowres/example1', category: 'Real (Challenging)' },
-        { path: 'assets/Lowres/example7', category: 'Real (Challenging)' },
+        { path: 'assets/Lowres/example1', category: 'Real Footage (Extreme Artifacts)' },
+        { path: 'assets/Lowres/example7', category: 'Real Footage (Extreme Artifacts)' },
     ];
 
     // Elements
