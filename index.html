@@ -4,6 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CreativeVR: Diffusion-Prior-Guided Approach</title>
+    
+    <!-- 
+    ========================================
+    VISITOR TRACKING - Google Analytics
+    ========================================
+    
+    To set up automated email reports:
+    1. Go to https://analytics.google.com/
+    2. Navigate to: Reports → Library
+    3. Create custom reports for visitor count, locations, etc.
+    4. Set up scheduled email delivery:
+       - Click "Share report" → "Schedule email"
+       - Choose frequency (daily/weekly/monthly)
+       - Add your email address
+    
+    You can track:
+    - Visitor count and trends
+    - Geographic locations (country, city)
+    - Traffic sources and referrers
+    - Device and browser information
+    - Real-time visitors
+    ========================================
+    -->
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-3X5CP84FQZ', {
+            'send_page_view': true
+        });
+    </script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -152,12 +187,11 @@
 
         .authors {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 15px;
             font-size: 1rem;
             margin: 5px 0; /* Minimized margin */
             line-height: 1.2; /* Tighter line height */
-            white-space: nowrap;
             overflow-x: visible;
             align-items: center; /* Vertically center all author names */
         }
@@ -184,7 +218,7 @@
             margin-bottom: 2px; /* Minimal margin */
             display: flex;
             gap: 12px; /* Tighter gap */
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
         }
         
         .conf-title {
@@ -319,7 +353,7 @@
         .cat-btn {
             border: none;
             background: #f1f2f6;
-            padding: 8px 20px; /* Wider padding */
+            padding: 8px 16px; /* Adjusted padding */
             border-radius: 30px; /* Pill shape */
             cursor: pointer;
             font-weight: 600;
@@ -327,6 +361,9 @@
             color: #666;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             border: 1px solid transparent; /* Prevent layout shift */
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .cat-btn:hover {
@@ -341,6 +378,14 @@
             border-color: #FF4B2B;
             box-shadow: 0 0 12px rgba(255, 75, 43, 0.4);
             transform: translateY(-1px);
+        }
+        
+        .cat-btn-thumbnail {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
         }
 
         .example-nav {
@@ -877,6 +922,182 @@
             justify-content: center;
             gap: 15px;
         }
+        
+        /* Responsive Design for Mobile */
+        @media (max-width: 768px) {
+            /* Header Layout */
+            header {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .header-content {
+                align-items: center;
+            }
+            
+            .main-logo {
+                width: 120px;
+                margin: 0 auto;
+            }
+            
+            /* Title */
+            h1.title {
+                font-size: 1.5rem;
+                line-height: 1.3;
+            }
+            
+            /* Authors */
+            .authors {
+                justify-content: center;
+                font-size: 0.9rem;
+                gap: 10px;
+            }
+            
+            .author-name {
+                white-space: normal;
+            }
+            
+            .equal-contribution-box {
+                flex-direction: column;
+                gap: 10px;
+                padding: 8px 12px;
+            }
+            
+            /* Affiliations */
+            .affiliations {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 8px;
+                font-size: 0.8rem;
+            }
+            
+            .affiliation-icon {
+                height: 0.8em;
+            }
+            
+            /* Contribution Notes */
+            div[style*="display: flex"][style*="flex-wrap: wrap"] span {
+                font-size: 0.75rem !important;
+            }
+            
+            /* Links */
+            .links {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .link-btn {
+                font-size: 0.85rem;
+                padding: 7px 16px;
+            }
+            
+            /* Navigation */
+            .nav-container {
+                padding: 0 10px;
+            }
+            
+            .nav-brand {
+                font-size: 1.1rem;
+            }
+            
+            .nav-brand img {
+                height: 24px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 4px;
+                justify-content: flex-end;
+            }
+            
+            .nav-btn {
+                font-size: 0.75rem;
+                padding: 5px 10px;
+            }
+            
+            /* Category Buttons */
+            .category-selector {
+                justify-content: center;
+            }
+            
+            .cat-btn {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+                gap: 6px;
+            }
+            
+            .cat-btn-thumbnail {
+                width: 28px;
+                height: 28px;
+            }
+            
+            /* Section Titles */
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-title::before,
+            .section-title::after {
+                width: 20px;
+            }
+            
+            /* Ablation Viewer */
+            .ablation-viewer {
+                grid-template-columns: 1fr;
+            }
+            
+            .knob-slider-wrapper {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .slider-spectrum-label {
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Container */
+            .container {
+                padding: 10px;
+            }
+            
+            /* Title */
+            h1.title {
+                font-size: 1.3rem;
+            }
+            
+            /* Authors */
+            .authors {
+                font-size: 0.85rem;
+                gap: 8px;
+            }
+            
+            /* Category Buttons */
+            .cat-btn {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
+            
+            .cat-btn-thumbnail {
+                width: 24px;
+                height: 24px;
+            }
+            
+            /* Video Controls */
+            .video-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            /* Navigation Arrows */
+            .nav-arrow {
+                width: 32px;
+                height: 32px;
+            }
+        }
 
     </style>
 </head>
@@ -938,6 +1159,7 @@
 
             <div class="links">
                 <a href="https://arxiv.org/pdf/2512.12060" target="_blank" class="link-btn"><i class="fas fa-file-pdf"></i> Paper</a>
+                <a href="#" class="link-btn" style="opacity: 0.6; cursor: default;" onclick="event.preventDefault()"><i class="fas fa-video"></i> Video (Coming soon)</a>
             </div>
         </div>
     </header>
@@ -946,11 +1168,26 @@
     <div class="video-card" id="main-showcase">
         <div class="video-controls">
             <div class="category-selector">
-                <button class="cat-btn active" onclick="switchCategory('AIGC')">AIGC</button>
-                <button class="cat-btn" onclick="switchCategory('Real Footage')">Real Footage</button>
-                <button class="cat-btn" onclick="switchCategory('Real Footage (Extreme Artifacts)')">Real Footage (Extreme Artifacts)</button>
-                <button class="cat-btn" onclick="switchCategory('CG2Real')">CG2Real</button>
-                <button class="cat-btn" onclick="switchCategory('SlowMo')">SlowMo</button>
+                <button class="cat-btn active" onclick="switchCategory('AIGC')">
+                    <img src="assets/thumbnails/thumb1.png" alt="AIGC" class="cat-btn-thumbnail">
+                    AIGC
+                </button>
+                <button class="cat-btn" onclick="switchCategory('Real Footage')">
+                    <img src="assets/thumbnails/thumb2.png" alt="Real Footage" class="cat-btn-thumbnail">
+                    Real Footage
+                </button>
+                <button class="cat-btn" onclick="switchCategory('Real Footage (Challenging)')">
+                    <img src="assets/thumbnails/thumb3.png" alt="Challenging" class="cat-btn-thumbnail">
+                    Real Footage (Challenging)
+                </button>
+                <button class="cat-btn" onclick="switchCategory('CG2Real')">
+                    <img src="assets/thumbnails/thumb4.png" alt="CG2Real" class="cat-btn-thumbnail">
+                    CG2Real
+                </button>
+                <button class="cat-btn" onclick="switchCategory('SlowMo')">
+                    <img src="assets/thumbnails/thumb5.png" alt="SlowMo" class="cat-btn-thumbnail">
+                    SlowMo
+                </button>
             </div>
             <div class="example-nav">
                 <button class="nav-arrow" onclick="prevExample()"><i class="fas fa-chevron-left"></i></button>
@@ -1208,7 +1445,7 @@
             inputName: 'baseline_input.mp4',
             oursName: 'Ours.mp4'
         },
-        'Real Footage (Extreme Artifacts)': {
+        'Real Footage (Challenging)': {
             path: 'assets/Lowres',
             examples: ['example1', 'example7', 'example8', 'example9'],
             inputName: 'baseline_input.mp4',
@@ -1253,8 +1490,8 @@
         { path: 'assets/AIGC/example8', category: 'AIGC' },
         { path: 'assets/AIGC/example9', category: 'AIGC' },
         { path: 'assets/AIGC/example10', category: 'AIGC' },
-        { path: 'assets/Lowres/example1', category: 'Real Footage (Extreme Artifacts)' },
-        { path: 'assets/Lowres/example7', category: 'Real Footage (Extreme Artifacts)' },
+        { path: 'assets/Lowres/example1', category: 'Real Footage (Challenging)' },
+        { path: 'assets/Lowres/example7', category: 'Real Footage (Challenging)' },
     ];
 
     // Elements
